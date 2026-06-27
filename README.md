@@ -33,11 +33,13 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
         ├── controllers/
         │   ├── authController.js
         │   ├── transactionController.js
-        │   └── budgetController.js
+        │   ├── budgetController.js
+        │   └── plaidController.js
         ├── routes/
         │   ├── authRoutes.js
         │   ├── transactionRoutes.js
-        │   └── budgetRoutes.js
+        │   ├── budgetRoutes.js
+        │   └── plaidRoutes.js
         ├── models/       (prisma)   
         └── server.js
 
@@ -53,4 +55,4 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
             ↓
         Controller sends response back
 
-    - Test with postman
+    - Test with Postman
