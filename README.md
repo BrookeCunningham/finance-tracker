@@ -11,7 +11,7 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
 
     - Create endpoints (import bank details, add/edit/delete expense)
         - REGISTER  POST /auth/register
-        - SIGN IN   POST /auth/signin
+        - SIGN IN   POST /auth/signIn
         - LOGOUT    POST /auth/logout
         - VIEW USER GET /user/view
         - EDIT USER PUT /user/edit
@@ -24,8 +24,8 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
         - ADD BUDGET    POST /budget/add
         - EDIT BUDGET   PUT /budget/edit
         - DELETE BUDGET DELETE /budget/delete
-        - BANK TOKEN  POST /plaid/create-link-token
-        - CONNECT BANK  POST /plaid/exchange-token
+        - BANK TOKEN  POST /plaid/createLinkToken
+        - CONNECT BANK  POST /plaid/exchangeToken
         - BANK DETAILS POST /plaid/transactions
         
     - MVC approach
@@ -42,7 +42,7 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
         └── server.js
 
         view : frontend/react
-        
+
         Request comes in
             ↓
         Route (decides which controller handles it)
