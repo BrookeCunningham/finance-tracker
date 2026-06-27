@@ -41,6 +41,8 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
         ├── models/       (prisma)   
         └── server.js
 
+        view : frontend/react
+        
         Request comes in
             ↓
         Route (decides which controller handles it)
