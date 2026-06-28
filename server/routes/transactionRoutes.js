@@ -1,6 +1,6 @@
 // import controller routes
 const {viewTransaction, addTransaction, editTransaction, deleteTransaction} = require('../controllers/transactionController.js');
-const transactionRouter = require('express').Router()
+const transactionRouter = require('express').Router();
 const authenticateToken = require('../middleware/authMiddleware.js');
 
 transactionRouter.get('/view', authenticateToken, viewTransaction);

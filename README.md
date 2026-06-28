@@ -55,4 +55,4 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
             ↓
         Controller sends response back
 
-    - Test with Postman
+    - Test with Thunder Client

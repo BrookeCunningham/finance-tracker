@@ -1,5 +1,5 @@
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
-const prisma = require('../prisma');
+const prisma = require('../prismaClient');
 require('dotenv').config();
 
 const plaidClient = new PlaidApi(new Configuration({

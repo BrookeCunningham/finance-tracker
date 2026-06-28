@@ -1,4 +1,4 @@
-const {bankToken, connectBank, bankDetails } = require('../controllers/plaidController'); 
+const {bankToken, connectBank, bankDetails } = require('../controllers/plaidController.js');
 const authenticateToken = require('../middleware/authMiddleware.js');
 const plaidRouter = require('express').Router();
 

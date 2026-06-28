@@ -1,4 +1,4 @@
-const prisma = require('../prisma');
+const prisma = require('../prismaClient');
 
 async function viewBudget(req, res) {
     const userId = req.user.userId;

@@ -10,6 +10,7 @@ const authRoutes = require('./routes/authRoutes')
 const transactionRoutes = require('./routes/transactionRoutes')
 const budgetRoutes = require('./routes/budgetRoutes')
 const plaidRoutes = require('./routes/plaidRoutes')
+const userRoutes = require('./routes/userRoutes')
 
 // add specific origin 
 app.use(cors());
@@ -20,6 +21,7 @@ app.use('/auth', authRoutes)
 app.use('/transaction', transactionRoutes)
 app.use('/budget', budgetRoutes)
 app.use('/plaid', plaidRoutes)
+app.use('/user', userRoutes)
 
 // starts server/express app
 app.listen(process.env.PORT || 3000, () => {

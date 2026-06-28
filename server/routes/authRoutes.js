@@ -1,7 +1,7 @@
 // import controller functions
-const { register, signIn, logout} = require ('../controllers/authController.js');
+const { register, signIn, logout} = require('../controllers/authController.js');
 
-const authRouter = require('express').Router()
+const authRouter = require('express').Router();
 
 authRouter.post('/register', register);
 authRouter.post('/signIn', signIn);
