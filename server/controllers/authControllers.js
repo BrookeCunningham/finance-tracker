@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../prisma');
 require('dotenv').config();
 
 /// user logs in 
-async function signin(req, res) {
+async function signIn(req, res) {
 
     const { email, password } = req.body;
 
@@ -30,7 +29,7 @@ async function signin(req, res) {
     // Generate JWT
     const token = jwt.sign(
         {
-            userId: user.id,
+            userId: user.userId,
             username: user.email
         },
         process.env.JWT_SECRET,
@@ -84,7 +83,7 @@ async function register(req,res){
      // Generate JWT
     const token = jwt.sign(
         {
-            userId: user.id,
+            userId: user.userId,
             username: user.email
         },
         process.env.JWT_SECRET,
@@ -107,7 +106,7 @@ async function logout(req, res) {
 }
 
 module.exports = {
-    login,
+    signIn,
     register,
     logout
 };

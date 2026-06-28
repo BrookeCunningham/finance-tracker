@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -13,6 +14,7 @@ model User {
   surname      String
   password     String
   createdAt    DateTime      @default(now())
+  plaidAccessToken String?
   transactions Transaction[]
   budgets      Budget[]
 }
@@ -21,8 +23,7 @@ model Transaction {
   transactionId Int      @id @default(autoincrement())
   plaidId       String?
   userId        Int
-  value         Float
-  payee         String
+  amount        Float
   category      String
   description   String
   createdAt     DateTime @default(now())

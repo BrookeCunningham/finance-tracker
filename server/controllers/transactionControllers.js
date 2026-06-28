@@ -1,11 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
+const prisma = require('../prisma');
 
 async function addTransaction(req, res) {
 
     const { amount, description, date, category, plaidId } = req.body;
-    const userId = req.user.userId; 
+    const userId = req.user.userId;
 
     if (!userId || !amount || !description || !date || !category) {
         return res.status(400).json({ error: 'Missing required fields' });
@@ -14,7 +12,6 @@ async function addTransaction(req, res) {
     if (typeof amount !== 'number' || amount <= 0) {
         return res.status(400).json({ error: 'Amount must be a positive number' });
     }
-
 
     const newTransaction = await prisma.transaction.create({
         data: {
@@ -37,6 +34,7 @@ async function viewTransaction(req, res) {
         where: { userId },
         orderBy: { createdAt: 'desc' },
     });
+
     res.status(200).json({ transactions });
 }
 
@@ -46,11 +44,11 @@ async function editTransaction(req, res) {
     const userId = req.user.userId;
 
     if (!amount || !description || !date || !category) {
-    return res.status(400).json({ error: 'Missing required fields' });
+        return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const transaction = await prisma.transaction.findUnique({
-        where: { id: parseInt(id) },
+        where: { transactionId: parseInt(id) },
     });
 
     if (!transaction) {
@@ -62,7 +60,7 @@ async function editTransaction(req, res) {
     }
 
     const updatedTransaction = await prisma.transaction.update({
-        where: { id: parseInt(id) },
+        where: { transactionId: parseInt(id) },
         data: {
             amount,
             description,
@@ -79,7 +77,7 @@ async function deleteTransaction(req, res) {
     const userId = req.user.userId;
 
     const transaction = await prisma.transaction.findUnique({
-        where: { id: parseInt(id) },
+        where: { transactionId: parseInt(id) },
     });
 
     if (!transaction) {
@@ -91,13 +89,13 @@ async function deleteTransaction(req, res) {
     }
 
     await prisma.transaction.delete({
-        where: { id: parseInt(id) },
+        where: { transactionId: parseInt(id) },
     });
 
     res.status(200).json({ message: 'Transaction deleted successfully' });
 }
 
-modules.exports = {
+module.exports = {
     addTransaction,
     viewTransaction,
     editTransaction,

@@ -1,13 +1,11 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-require('dotenv').config();
+const prisma = require('../prisma');
 
 async function viewUser(req, res) {
 
-    const email = req.user.email; 
+    const userId = req.user.userId;
 
     const user = await prisma.user.findUnique({
-        where: { email: email },
+        where: { userId },
         select: { email: true, firstName: true, surname: true, userId: true }
     });
 
@@ -15,19 +13,21 @@ async function viewUser(req, res) {
         return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ user: user });
+    res.status(200).json({ user });
 }
 
-async function updateUser(req, res) {
+async function editUser(req, res) {
 
-    const email = req.user.email;
+    const userId = req.user.userId;
     const { firstName, surname, email: newEmail } = req.body;
 
     if (!firstName || !surname || !newEmail) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
-    if (newEmail !== email) {
+    const currentUser = await prisma.user.findUnique({ where: { userId } });
+
+    if (newEmail !== currentUser.email) {
         const emailRegex = /^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/;
         if (!emailRegex.test(newEmail)) {
             return res.status(400).json({ message: 'Invalid email format' });
@@ -39,29 +39,29 @@ async function updateUser(req, res) {
     }
 
     const user = await prisma.user.update({
-        where: { email: email },
+        where: { userId },
         data: { email: newEmail, firstName, surname }
     });
 
-    res.status(200).json({ user: user });
+    res.status(200).json({ user });
 }
 
 async function deleteUser(req, res) {
 
-    const email = req.user.email;   
+    const userId = req.user.userId;
 
-    const user = await prisma.user.findUnique({ where: { email: email } });
+    const user = await prisma.user.findUnique({ where: { userId } });
     if (!user) {
         return res.status(404).json({ message: 'User not found' });
     }
 
-    await prisma.user.delete({ where: { email: email } });
+    await prisma.user.delete({ where: { userId } });
 
     res.status(200).json({ message: 'User deleted successfully' });
 }
 
 module.exports = {
     viewUser,
-    updateUser,
+    editUser,
     deleteUser
 };
