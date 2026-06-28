@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 require('dotenv').config();
 
 /// user logs in 
-async function login(req, res) {
+async function signin(req, res) {
 
     const { email, password } = req.body;
 
