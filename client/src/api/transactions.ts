@@ -58,7 +58,3 @@ export async function deleteTransaction(id: string) {
 
   return response.json();
 }
-
-function useEffect(arg0: () => void, arg1: never[]) {
-    throw new Error("Function not implemented.");
-}

@@ -1,10 +1,13 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Button from "@mui/material/Button";
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const navItems = [
     { label: 'Dashboard', path: '/dashboard' },
@@ -26,9 +29,17 @@ function Sidebar() {
       top: 0,
       left: 0
     }}>
-      <Typography variant="h6" sx={{ fontWeight: 700, padding: '16px 8px 24px', borderBottom: '1px solid #e5e7eb', marginBottom: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, padding: '16px 8px 24px', borderBottom: '1px solid #e5e7eb', marginBottom: 2 }}>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="12" width="4" height="10" rx="1" fill="#1976d2"/>
+        <rect x="8" y="8" width="4" height="14" rx="1" fill="#1976d2"/>
+        <rect x="14" y="4" width="4" height="18" rx="1" fill="#1976d2"/>
+        <rect x="20" y="9" width="4" height="13" rx="1" fill="#1976d2" opacity="0.4"/>
+      </svg>
+      <Typography variant="h6" sx={{ fontWeight: 700 }}>
         Fin<span style={{ color: '#1976d2' }}>trak</span>
       </Typography>
+    </Box>
 
       {navItems.map((item) => (
         <Box
@@ -53,6 +64,16 @@ function Sidebar() {
           {item.label}
         </Box>
       ))}
+      <Box sx={{ marginTop: 'auto', paddingTop: 2, borderTop: '1px solid #e5e7eb', padding: 2 }}>
+        <Button
+          fullWidth
+          variant="outlined"
+          color="error"
+          onClick={() => { logout(); navigate('/login'); }}
+        >
+          Log Out
+        </Button>
+      </Box>
     </Box>
   );
 }
