@@ -5,34 +5,29 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-function Login() {
-
+function Register() {
+  const [firstName, setFirstName] = useState('');
+  const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
- const handleLogin = async () => {
-  console.log('handleLogin called', email, password);
-  try {
-    const response = await fetch('http://localhost:3000/auth/signIn', {
+  const handleRegister = async () => {
+    const response = await fetch('http://localhost:3000/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ firstName, surname, email, password })
     });
 
     if (!response.ok) {
-      window.alert('Login failed. Please check your credentials.');
+      window.alert('Registration failed. Please check your credentials.');
       return;
     }
 
     const data = await response.json();
     localStorage.setItem('token', data.token);
     navigate('/dashboard');
-  } catch (err) {
-    console.error('Fetch error:', err);
-  }
-};
+  };
 
   return (
     <Box sx={{
@@ -53,16 +48,18 @@ function Login() {
         width: 400,
         textAlign: 'center'
       }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>Login</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>Create an account</Typography>
+        <TextField label="First Name" variant="outlined" fullWidth value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+        <TextField label="Surname" variant="outlined" fullWidth value={surname} onChange={(e) => setSurname(e.target.value)} />
         <TextField label="Email" variant="outlined" fullWidth value={email} onChange={(e) => setEmail(e.target.value)} />
         <TextField label="Password" variant="outlined" type="password" fullWidth value={password} onChange={(e) => setPassword(e.target.value)} />
-        <Button variant="contained" color="primary" fullWidth size="large" onClick={handleLogin}>Log In</Button>
+        <Button variant="contained" color="primary" fullWidth size="large" onClick={handleRegister}>Sign Up</Button>
         <Typography variant="body2" color="text.secondary">
-          Don't have an account? <span style={{ color: '#1976d2', cursor: 'pointer' }} onClick={() => navigate('/register')}>Sign Up</span>
+          Already have an account? <span style={{ color: '#1976d2', cursor: 'pointer' }} onClick={() => navigate('/login')}>Log In</span>
         </Typography>
       </Box>
     </Box>
   );
 }
 
-export default Login;
+export default Register;
