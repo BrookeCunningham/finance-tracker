@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 
 function Login() {
@@ -11,6 +12,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
  const handleLogin = async () => {
   console.log('handleLogin called', email, password);
@@ -27,7 +29,7 @@ function Login() {
     }
 
     const data = await response.json();
-    localStorage.setItem('token', data.token);
+    login(data.token); 
     navigate('/dashboard');
   } catch (err) {
     console.error('Fetch error:', err);
