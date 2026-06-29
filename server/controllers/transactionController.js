@@ -5,11 +5,11 @@ async function addTransaction(req, res) {
     const { amount, description, date, category, plaidId } = req.body;
     const userId = req.user.userId;
 
-    if (!userId || !amount || !description || !date || !category) {
+    if (!userId || !description || !date || !category) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    if (typeof amount !== 'number' || amount <= 0) {
+    if (typeof amount !== 'number' || amount === 0)  {
         return res.status(400).json({ error: 'Amount must be a positive number' });
     }
 

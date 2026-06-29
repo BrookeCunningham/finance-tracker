@@ -56,3 +56,6 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
         Controller sends response back
 
     - Test with Thunder Client
+
+
+2. Frontend Planning
