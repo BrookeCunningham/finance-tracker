@@ -5,6 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import { getTransactions } from "../api/transactions";
+import InsightsPanel from "../components/InsightsPanel";
 
 function Dashboard() {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -47,6 +48,11 @@ function Dashboard() {
               </CardContent>
             </Card>
           ))}
+        </Box>
+
+        {/* Insights */}
+        <Box sx={{ marginBottom: 4 }}>
+          <InsightsPanel />
         </Box>
 
         {/* Recent Transactions */}

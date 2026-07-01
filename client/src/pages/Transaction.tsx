@@ -43,7 +43,7 @@ function Transactions() {
         description: transaction.description,
         amount: transaction.amount,
         category: transaction.category,
-        date: transaction.date?.split('T')[0] ?? '',
+        date: transaction.createdAt?.split('T')[0] ?? '',
         type: transaction.type
       });
     } else {
@@ -120,7 +120,7 @@ function Transactions() {
                   <TableRow key={t.transactionId}>
                     <TableCell>{t.description}</TableCell>
                     <TableCell>{t.category}</TableCell>
-                    <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
+                    <TableCell>{new Date(t.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell sx={{ color: t.amount > 0 ? '#1976d2' : '#ff4d6d', fontWeight: 600 }}>
                       {t.amount > 0 ? '+' : ''}£{parseFloat(t.amount).toFixed(2)}
                     </TableCell>

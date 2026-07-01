@@ -1,6 +1,6 @@
-import prisma from '../prismaClient.js';
+const prisma = require('../prismaClient');
 
-export const getMonthlyInsights = async (req, res) => {
+const getMonthlyInsights = async (req, res) => {
   try {
     const userId = req.user.userId;
 
@@ -76,4 +76,8 @@ export const getMonthlyInsights = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch insights' });
   }
+};
+
+module.exports = {
+  getMonthlyInsights,
 };
