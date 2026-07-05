@@ -1,8 +1,13 @@
-const express = require('express');
+// import controller functions
 const { getMonthlyInsights } = require('../controllers/insightsController');
+// import middleware for authentication
 const authenticateToken = require('../middleware/authMiddleware');
 
-const router = express.Router();
-router.get('/monthly', authenticateToken, getMonthlyInsights);
+// define router object
+const insightsRouter = require('express').Router(); 
 
-module.exports = router;
+// define routes and attach controller functions
+insightsRouter.get('/monthly', authenticateToken, getMonthlyInsights);
+
+// export to server.js
+module.exports = insightsRouter;
