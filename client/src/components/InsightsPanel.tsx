@@ -1,8 +1,14 @@
+// useEffect = effect on load
+// useState = stores data
 import { useEffect, useState } from 'react';
+// MUI components
 import { Box, Card, CardContent, Typography, Grid, CircularProgress } from '@mui/material';
+// charts from recharts 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+// access to api which connects to database
 import { getMonthlyInsights } from '../api/insights';
 
+// interface = object without implementation
 interface InsightsCategory {
   category: string;
   currentValue: number;
@@ -19,15 +25,21 @@ interface LocalInsightsResponse {
   topCategory?: InsightsTopCategory | null;
 }
 
+// function that returns the react componant
 const InsightsPanel = () => {
+  // defining const to store data
   const [data, setData] = useState<LocalInsightsResponse | null>(null);
+  // loading starts as true
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // when page opens fetch insights
+  // small funct inside funct
   useEffect(() => {
   const fetchInsights = async () => {
     try {
       const result = await getMonthlyInsights();
+      // use hook to change data
       setData(result);
     } catch (err) {
       setError('Failed to load insights');

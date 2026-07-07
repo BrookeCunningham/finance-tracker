@@ -33,12 +33,14 @@ function Budget() {
     getTransactions().then((data) => setTransactions(data.transactions)).catch(console.error);
   };
 
+  // so for each category calculate spending
   const getSpentForCategory = (category: string) => {
     return transactions
       .filter((t) => t.category === category && t.amount < 0)
       .reduce((sum, t) => sum + Math.abs(t.amount), 0);
   };
 
+  // if there is a budget
   const handleOpen = (budget?: any) => {
     if (budget) {
       setEditingId(budget.budgetId);

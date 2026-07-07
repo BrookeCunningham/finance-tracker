@@ -26,6 +26,7 @@ function Transactions() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ description: '', amount: '', category: 'Other', date: '', type: 'Expense' });
 
+  // on open fetch transactions
   useEffect(() => {
     fetchTransactions();
   }, []);

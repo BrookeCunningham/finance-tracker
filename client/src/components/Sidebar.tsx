@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import Button from "@mui/material/Button";
 
 function Sidebar() {
+  // objects to use
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuth();
@@ -44,6 +45,7 @@ function Sidebar() {
       {navItems.map((item) => (
         <Box
           key={item.path}
+          // redirect ie change url to match path ie. open display
           onClick={() => navigate(item.path)}
           sx={{
             padding: '10px 12px',
