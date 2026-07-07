@@ -1,4 +1,7 @@
+// waiting for response from backend
 export async function getBudgets() {
+
+  // getting token from browser storage and attaching
   const token = localStorage.getItem('token');
 
   const response = await fetch('http://localhost:3000/budget/view', {
@@ -11,6 +14,8 @@ export async function getBudgets() {
   return response.json();
 }
 
+// add a new budget
+// (budget: any) = variable + type (ts)
 export async function addBudget(budget: any) {
   const token = localStorage.getItem('token');
 
@@ -20,6 +25,7 @@ export async function addBudget(budget: any) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
+    // body = data but JSON.stringify before sending
     body: JSON.stringify(budget)
   });
 
@@ -28,9 +34,10 @@ export async function addBudget(budget: any) {
   return response.json();
 }
 
+// budget id needs to be a string
 export async function editBudget(id: string, budget: any) {
   const token = localStorage.getItem('token');
-
+  // id needs to be sent as a param
   const response = await fetch(`http://localhost:3000/budget/edit/${id}`, {
     method: 'PUT',
     headers: {
