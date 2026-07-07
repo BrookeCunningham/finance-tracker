@@ -1,32 +1,45 @@
+//json web tokens for authentication
 const jwt = require('jsonwebtoken');
+// bcrypt for password hashing
 const bcrypt = require('bcrypt');
+// prisma client object for database access
 const prisma = require('../prismaClient');
+// load environment variables from .env file
 require('dotenv').config();
 
-/// user logs in 
+// user logs in function
+// async because it uses await
 async function signIn(req, res) {
 
+    // extract email and password from request body
     const { email, password } = req.body;
 
+    // check if email and password are provided
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
     }
 
+    // find user in database by email
+    // returns an object with user data
     const user = await prisma.user.findUnique({
         where: { email: email }
     });
 
+    // if user does not exist or password does not match, return error
     if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
     }
 
+    // if user exists
+    // compare provided password with hashed password in database
     const passwordMatches = await bcrypt.compare(password, user.password);
 
+    // incorrect password, return error
     if (!passwordMatches) {
         return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Generate JWT
+    // Generate JWT token for authenticated user
     const token = jwt.sign(
         {
             userId: user.userId,
@@ -38,6 +51,7 @@ async function signIn(req, res) {
         }
     );
 
+    // on successful login, return success message and token
     res.status(200).json({
         message: "Login successful",
         token: token

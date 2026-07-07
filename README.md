@@ -59,3 +59,11 @@ Finance tracker developed with React, TypeScript, Node.js, Express, PostgreSQL, 
 
 
 2. Frontend Planning
+
+STILL TO DO 
+1. TOKENS TIMEOUT
+2. PLAID API, IMPORT FROM BANK BUTTON?
+3. TEST TEST TEST
+4. IS BUDGETS PER YEAR PER MONTH?
+5. edit transactions? does user evre know transactionid as its req.params
+6. put trys in all the access brackets
