@@ -15,7 +15,7 @@ function Login() {
   const { login } = useAuth();
 
  const handleLogin = async () => {
-  console.log('handleLogin called', email, password);
+  
   try {
     const response = await fetch('http://localhost:3000/auth/signIn', {
       method: 'POST',
@@ -28,6 +28,7 @@ function Login() {
       return;
     }
 
+    // if signin successful, save token to browser 
     const data = await response.json();
     login(data.token); 
     navigate('/dashboard');

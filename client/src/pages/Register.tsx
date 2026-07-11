@@ -24,6 +24,7 @@ function Register() {
       return;
     }
 
+    // save token to browser
     const data = await response.json();
     localStorage.setItem('token', data.token);
     navigate('/dashboard');
