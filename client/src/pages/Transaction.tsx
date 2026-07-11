@@ -41,10 +41,10 @@ function Transactions() {
       setEditingId(transaction.transactionId);
       setForm({
         description: transaction.description,
-        amount: transaction.amount,
+        amount:(Math.abs(transaction.amount)).toString(),
         category: transaction.category,
         date: transaction.createdAt?.split('T')[0] ?? '',
-        type: transaction.type
+        type: ( transaction.amount > 0 ?'Income' : 'Expense' )
       });
     } else {
       setEditingId(null);

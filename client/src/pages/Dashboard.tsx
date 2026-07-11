@@ -16,11 +16,18 @@ function Dashboard() {
     .catch((err) => console.error(err));
   }, []);
 
-  const income = transactions
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const monthlyTransactions = transactions.filter(
+    (t) => new Date(t.createdAt) >= monthStart
+  );
+
+  const income = monthlyTransactions
     .filter((t) => t.amount > 0)
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const expenses = transactions
+  const expenses = monthlyTransactions
     .filter((t) => t.amount < 0)
     .reduce((sum, t) => sum + t.amount, 0);
 
