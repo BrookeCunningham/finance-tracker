@@ -17,6 +17,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import { getTransactions, addTransaction, editTransaction, deleteTransaction } from "../api/transactions";
+import  ConnectBank from "../components/ConnectBank";
+import { syncPlaidTransactions } from '../api/plaid'
 
 const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Eating Out', 'Subscriptions', 'Income', 'Other'];
 
@@ -25,6 +27,7 @@ function Transactions() {
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ description: '', amount: '', category: 'Other', date: '', type: 'Expense' });
+
 
   useEffect(() => {
     fetchTransactions();
@@ -93,9 +96,21 @@ function Transactions() {
       <Sidebar />
       <Box sx={{ marginLeft: '240px', padding: 4, flex: 1, backgroundColor: '#f7f8fc', minHeight: '100vh' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>Transactions</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>Transactions</Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <ConnectBank onSuccess={fetchTransactions} />
           <Button variant="contained" color="primary" onClick={() => handleOpen()}>+ Add Transaction</Button>
         </Box>
+        <Button
+        variant="outlined"
+        onClick={async () => {
+          await syncPlaidTransactions();
+          fetchTransactions();
+        }}
+      >
+        Sync
+      </Button>
+      </Box>
 
         <TableContainer component={Paper} sx={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
           <Table>

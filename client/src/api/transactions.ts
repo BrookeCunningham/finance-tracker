@@ -5,6 +5,7 @@ export async function getTransactions() {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` }
   });
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
 
   if (!response.ok) throw new Error('Failed to fetch transactions');
   
@@ -23,6 +24,8 @@ export async function addTransaction(transaction: any) {
     },
     body: JSON.stringify(transaction)
   });
+  
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
 
   if (!response.ok) throw new Error('Failed to add transaction');
 
@@ -41,6 +44,8 @@ export async function editTransaction(id: string, transaction: any) {
     body: JSON.stringify(transaction)
   });
 
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
+
   if (!response.ok) throw new Error('Failed to edit transaction');
 
   return response.json();
@@ -53,6 +58,8 @@ export async function deleteTransaction(id: string) {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
+
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
 
   if (!response.ok) throw new Error('Failed to delete transaction');
 
