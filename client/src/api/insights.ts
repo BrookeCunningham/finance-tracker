@@ -18,6 +18,7 @@ export async function getMonthlyInsights(month?: number, year?: number) {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` }
   });
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
 
   if (!response.ok) throw new Error('Failed to fetch insights');
 

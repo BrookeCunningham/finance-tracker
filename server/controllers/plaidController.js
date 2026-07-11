@@ -1,92 +1,120 @@
-// imports plaid library
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
 const prisma = require('../prismaClient');
-// env variables under process.env
 require('dotenv').config();
 
-// create an API object 
-// configuration object - how to connect
-// 
 const plaidClient = new PlaidApi(new Configuration({
-    basePath: PlaidEnvironments[process.env.PLAID_ENV],
-    baseOptions: {
-        // authentication headers
-        headers: {
-            'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
-            'PLAID-SECRET': process.env.PLAID_SECRET,
-        },
+  basePath: PlaidEnvironments[process.env.PLAID_ENV],
+  baseOptions: {
+    headers: {
+      'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
+      'PLAID-SECRET': process.env.PLAID_SECRET,
     },
+  },
 }));
 
-// function to create a link token for the user
+// ---- HELPERS ----
+
+// converts Plaid's category array (e.g. ["Food and Drink", "Restaurants"])
+// into one of your app's categories
+function mapPlaidCategory(plaidCategories) {
+  if (!plaidCategories || plaidCategories.length === 0) return 'Other';
+  const top = plaidCategories[0].toLowerCase();
+  if (top.includes('food')) return 'Food';
+  if (top.includes('travel') || top.includes('transport')) return 'Transport';
+  if (top.includes('shop')) return 'Shopping';
+  if (top.includes('recreation') || top.includes('restaurant')) return 'Eating Out';
+  if (top.includes('service') || top.includes('subscription')) return 'Subscriptions';
+  if (top.includes('transfer') || top.includes('deposit')) return 'Income';
+  return 'Other';
+}
+
+// shared sync function — called by connectBank AND syncTransactions
+async function syncPlaidTransactions(userId, accessToken) {
+  let cursor = null;
+  let added = [];
+  let hasMore = true;
+
+  while (hasMore) {
+    const response = await plaidClient.transactionsSync({
+      access_token: accessToken,
+      cursor: cursor ?? undefined,
+    });
+
+    added = added.concat(response.data.added);
+    hasMore = response.data.has_more;
+    cursor = response.data.next_cursor;
+  }
+
+  for (const tx of added) {
+    await prisma.transaction.upsert({
+      where: { plaidId: tx.transaction_id },
+      update: {},
+      create: {
+        userId,
+        plaidId: tx.transaction_id,
+        description: tx.name,
+        amount: -tx.amount,
+        category: mapPlaidCategory(tx.category),
+        createdAt: new Date(tx.date),
+        source: 'plaid',
+      },
+    });
+  }
+}
+// ---- ROUTE HANDLERS ----
+
+// creates a link token so the frontend can open Plaid Link
 async function bankToken(req, res) {
+  const userId = req.user.userId;
 
-    // grab userid
-    const userId = req.user.userId;
+  const response = await plaidClient.linkTokenCreate({
+    user: { client_user_id: String(userId) },
+    client_name: 'Finance Tracker',
+    products: ['transactions'],
+    country_codes: ['GB'],
+    language: 'en',
+  });
 
-    // create a link token for the user using plaid api object
-    const response = await plaidClient.linkTokenCreate({
-        user: { client_user_id: String(userId) },
-        client_name: 'Finance Tracker',
-        products: ['transactions'],
-        country_codes: ['GB'],
-        language: 'en',
-    });
-
-    // return the link token to the client
-    res.status(200).json({ link_token: response.data.link_token });
+  res.status(200).json({ link_token: response.data.link_token });
 }
 
-// converts temp token into access token and stores it in the database
+// exchanges public_token for access_token, stores it, and pulls initial transactions
 async function connectBank(req, res) {
-    // grab userid from middleware 
-    const userId = req.user.userId;
-    // extract public token from request body
-    const { public_token } = req.body;
 
-    if (!public_token) {
-        return res.status(400).json({ error: 'Missing public token' });
-    }
+    console.log('req.body:', req.body);
+  console.log('public_token:', req.body?.public_token);
+  const userId = req.user.userId;
+  const { public_token } = req.body;
 
-    // exchange public token
-    const response = await plaidClient.itemPublicTokenExchange({ public_token });
-    const accessToken = response.data.access_token;
+  if (!public_token) {
+    return res.status(400).json({ error: 'Missing public token' });
+  }
 
-    // save to database for user
-    await prisma.user.update({
-        where: { userId },
-        data: { plaidAccessToken: accessToken },
-    });
+  const response = await plaidClient.itemPublicTokenExchange({ public_token });
+  const accessToken = response.data.access_token;
 
-    // return success message
-    res.status(200).json({ message: 'Bank connected successfully' });
+  await prisma.user.update({
+    where: { userId },
+    data: { plaidAccessToken: accessToken },
+  });
+
+  // NEW: pull transactions into DB straight away
+  await syncPlaidTransactions(userId, accessToken);
+
+  res.status(200).json({ message: 'Bank connected and transactions synced' });
 }
 
-// function to get bank details for the user from api
-async function bankDetails(req, res) {
-    // grab userid from middleware
-    const userId = req.user.userId;
+// manually re-sync transactions (for a "Sync" button on the frontend)
+async function syncTransactions(req, res) {
+  const userId = req.user.userId;
 
-    // find user in database from userid
-    const user = await prisma.user.findUnique({
-        where: { userId },
-    });
+  const user = await prisma.user.findUnique({ where: { userId } });
+  if (!user || !user.plaidAccessToken) {
+    return res.status(400).json({ error: 'No bank account connected' });
+  }
 
-    // if user does not exist or does not have a plaid access token, return error
-    if (!user || !user.plaidAccessToken) {
-        return res.status(400).json({ error: 'No bank account connected' });
-    }
-
-    // get transactions from plaid api using access token and date range
-    const response = await plaidClient.transactionsGet({
-        access_token: user.plaidAccessToken,
-        start_date: '2025-01-01',
-        end_date: new Date().toISOString().split('T')[0],
-    });
-
-    // return transactions to client
-    res.status(200).json({ transactions: response.data.transactions });
+  await syncPlaidTransactions(userId, user.plaidAccessToken);
+  res.status(200).json({ message: 'Transactions synced' });
 }
 
-// export the functiosn to route level
-module.exports = { bankToken, connectBank, bankDetails };
+module.exports = { bankToken, connectBank, syncTransactions };

@@ -1,9 +1,7 @@
 const prisma = require('../prismaClient');
 
-async function getMonthlyInsights(req, res){
-
+async function getMonthlyInsights(req, res) {
   try {
-
     // get userid from middleware
     const userId = req.user.userId;
 
@@ -15,13 +13,10 @@ async function getMonthlyInsights(req, res){
     const year = req.query.year ? parseInt(req.query.year) : now.getFullYear();
 
     // calculate the start and end dates for the current month
-    // year + month + 1 so first of the month
     const currentStart = new Date(year, month - 1, 1);
-    // 1st of the next month
     const currentEnd = new Date(year, month, 1);
 
-    // same for previous month
-    // might be different year
+    // same for previous month (might be different year)
     const prevMonth = month === 1 ? 12 : month - 1;
     const prevYear = month === 1 ? year - 1 : year;
     const prevStart = new Date(prevYear, prevMonth - 1, 1);
@@ -32,38 +27,37 @@ async function getMonthlyInsights(req, res){
       by: ['category'],
       where: {
         userId,
+        amount: { lt: 0 },
         createdAt: { gte: currentStart, lt: currentEnd },
       },
-      // add up all amount values for each category
-       _sum: { amount: true },
+      _sum: { amount: true },
     });
 
-    // same but for the previous month
     const prevData = await prisma.transaction.groupBy({
       by: ['category'],
       where: {
         userId,
+        amount: { lt: 0 },
         createdAt: { gte: prevStart, lt: prevEnd },
       },
       _sum: { amount: true },
     });
 
-    // for previous data object map
+    // build a lookup for previous month by category
     const prevMap = {};
     prevData.forEach((row) => {
       prevMap[row.category] = row._sum.amount || 0;
     });
 
-    // calculate total for current month
-    const totalCurrent = currentData.reduce((sum, row) => sum + (row._sum.amount || 0), 0);
+    // total spend for current month (absolute, since expenses are negative)
+    const totalCurrent = Math.abs(
+      currentData.reduce((sum, row) => sum + (row._sum.amount || 0), 0)
+    );
 
-    // calculate catgeory value current and previous month
-    // and calculate percent change and percent of total for current month
+    // build category insights
     const categories = currentData.map((row) => {
-
-      // lookup not loop
-      const currentValue = row._sum.amount || 0;
-      const prevValue = prevMap[row.category] || 0;
+      const currentValue = Math.abs(row._sum.amount || 0);
+      const prevValue = Math.abs(prevMap[row.category] || 0);
 
       let percentChange = null;
       if (prevValue > 0) {
@@ -72,7 +66,6 @@ async function getMonthlyInsights(req, res){
         percentChange = 100;
       }
 
-      // return values 
       return {
         category: row.category,
         currentValue,
@@ -85,10 +78,9 @@ async function getMonthlyInsights(req, res){
     // sort categories by current value descending
     categories.sort((a, b) => b.currentValue - a.currentValue);
 
-    // get the top category if it exists
+    // top expense category (already positive from the map above)
     const topCategory = categories[0] || null;
 
-    // return the insights data
     res.status(200).json({
       month,
       year,
@@ -96,12 +88,11 @@ async function getMonthlyInsights(req, res){
       categories,
       topCategory,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch insights' });
   }
-};
+}
 
 // export the function to be used in the routes
 module.exports = {

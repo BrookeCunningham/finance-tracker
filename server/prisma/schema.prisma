@@ -20,11 +20,12 @@ model User {
 
 model Transaction {
   transactionId Int      @id @default(autoincrement())
-  plaidId       String?
+  plaidId       String?  @unique   // ← this MUST have @unique
   userId        Int
   amount        Float
   category      String
   description   String
+  source        String   @default("manual") // "manual" or "plaid"
   createdAt     DateTime @default(now())
   user          User     @relation(fields: [userId], references: [userId])
 }

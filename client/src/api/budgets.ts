@@ -9,6 +9,8 @@ export async function getBudgets() {
     headers: { 'Authorization': `Bearer ${token}` }
   });
 
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
+
   if (!response.ok) throw new Error('Failed to fetch budgets');
 
   return response.json();
@@ -28,7 +30,7 @@ export async function addBudget(budget: any) {
     // body = data but JSON.stringify before sending
     body: JSON.stringify(budget)
   });
-
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
   if (!response.ok) throw new Error('Failed to add budget');
 
   return response.json();
@@ -46,6 +48,7 @@ export async function editBudget(id: string, budget: any) {
     },
     body: JSON.stringify(budget)
   });
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
 
   if (!response.ok) throw new Error('Failed to edit budget');
 
@@ -59,6 +62,7 @@ export async function deleteBudget(id: string) {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
+  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
 
   if (!response.ok) throw new Error('Failed to delete budget');
 
