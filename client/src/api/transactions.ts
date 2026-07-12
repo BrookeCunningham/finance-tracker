@@ -13,7 +13,6 @@ export async function getTransactions() {
   return response.json();
 }
 
-// transaction object
 export async function addTransaction(transaction: any) {
   const token = localStorage.getItem('token');
 

@@ -1,13 +1,13 @@
 # Fintrak
 
-A full-stack personal finance tracker. Log transactions, set category budgets, and see monthly spending broken down by category. Auth is JWT-based and there's a Plaid integration for pulling in real bank transactions.
+A full-stack personal finance tracker. Log transactions, set category budgets, and see monthly spending broken down by category. Auth is JWT-based and there's a Plaid integration for pulling in example bank transactions (PLAID Sandbox).
 
 ## Stack
 
 **Backend**
-- Node.js + Express (CommonJS)
+- Node.js + Express
 - PostgreSQL, hosted on ElephantSQL
-- Prisma v6 as the ORM
+- Prisma 
 - JWT for auth, bcrypt for password hashing
 - Plaid Node SDK
 
@@ -110,7 +110,7 @@ The view layer is the React frontend.
 ```
 Request comes in
       ↓
-   Route  (decides which controller handles it)
+Route  (decides which controller handles it)
       ↓
 Controller  (business logic)
       ↓

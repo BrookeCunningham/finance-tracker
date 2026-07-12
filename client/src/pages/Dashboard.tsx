@@ -4,15 +4,12 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
-// needs to display transactions and insights
 import { getTransactions } from "../api/transactions";
 import InsightsPanel from "../components/InsightsPanel";
 
 function Dashboard() {
   const [transactions, setTransactions] = useState<any[]>([]);
 
-  // call get transactions
-  // [] on mounting 
   useEffect(() => {
   getTransactions()
     .then((data) => setTransactions(data.transactions))
@@ -34,10 +31,8 @@ function Dashboard() {
     .filter((t) => t.amount < 0)
     .reduce((sum, t) => sum + t.amount, 0);
 
-  // calc bank balance
   const balance = income + expenses;
 
-  // display info
   const summaryCards = [
     { label: 'Total Balance', value: `£${balance.toFixed(2)}` },
     { label: 'Income', value: `£${income.toFixed(2)}` },

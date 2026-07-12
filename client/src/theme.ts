@@ -1,8 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-// store all of apps default settings
-
-// theme object from mui lib 
 const theme = createTheme({
   palette: {
     primary: {
@@ -21,5 +18,4 @@ const theme = createTheme({
   },
 });
 
-// default means no brackets
 export default theme;
