@@ -13,13 +13,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import { getBudgets, addBudget, editBudget, deleteBudget } from "../api/budgets";
-import { getTransactions } from "../api/transactions";
 
 const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Eating Out', 'Subscriptions', 'Income', 'Other'];
 
 function Budget() {
   const [budgets, setBudgets] = useState<any[]>([]);
-  const [transactions, setTransactions] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ category: 'Other', budgetValue: '' });
@@ -30,19 +28,12 @@ function Budget() {
 
   const fetchData = () => {
     getBudgets().then((data) => setBudgets(data.budgets)).catch(console.error);
-    getTransactions().then((data) => setTransactions(data.transactions)).catch(console.error);
-  };
-
-  const getSpentForCategory = (category: string) => {
-    return transactions
-      .filter((t) => t.category === category && t.amount < 0)
-      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
   };
 
   const handleOpen = (budget?: any) => {
     if (budget) {
       setEditingId(budget.budgetId);
-      setForm({ category: budget.category, budgetValue: budget.budgetValue });
+      setForm({ category: budget.category, budgetValue: budget.budgetValue});
     } else {
       setEditingId(null);
       setForm({ category: 'Other', budgetValue: '' });
@@ -88,21 +79,26 @@ function Budget() {
           <Button variant="contained" color="primary" onClick={() => handleOpen()}>+ Add Budget</Button>
         </Box>
 
+        <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 2 }}>
+          Showing spend for {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+        </Typography>
+
         {budgets.length === 0 ? (
           <Typography variant="body2" color="text.secondary">No budgets yet.</Typography>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {budgets.map((b) => {
-              const spent = getSpentForCategory(b.category);
-              const progress = Math.min((spent / b.budgetValue) * 100, 100);
-              const over = spent > b.budgetValue;
+              const spent = b.spent ?? 0;
+              const budgetValue = parseFloat(b.budgetValue);
+              const progress = Math.min((spent / budgetValue) * 100, 100);
+              const over = spent > budgetValue;
               return (
                 <Card key={b.budgetId} sx={{ boxShadow: '0 1px 4px rgba(0,0,0,0.07)' }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: 1 }}>
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>{b.category}</Typography>
                       <Typography variant="body2" color={over ? 'error' : 'text.secondary'}>
-                        £{spent.toFixed(2)} / £{parseFloat(b.budgetValue).toFixed(2)}
+                        £{spent.toFixed(2)} / £{budgetValue.toFixed(2)}
                       </Typography>
                     </Box>
                     <LinearProgress
