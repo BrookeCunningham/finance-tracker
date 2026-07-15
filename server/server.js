@@ -25,6 +25,10 @@ const insightsRoutes = require('./routes/insightsRoutes')
 
 // if client sends json make it a js object
 app.use(express.json());
+app.use((req,res,next)=>{
+  console.log("REQUEST:", req.method, req.path);
+  next();
+});
 
 // register routes and redirect
 app.use('/auth', authRoutes)
