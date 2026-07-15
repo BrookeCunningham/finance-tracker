@@ -6,6 +6,12 @@ const express = require('express');
 const app = express();
 // cross origin resource sharing
 const cors = require('cors');
+// middleware
+// maybe specify origin in future
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true
+}))
 
 // imports route files
 // next step in the pipeline
@@ -16,12 +22,7 @@ const plaidRoutes = require('./routes/plaidRoutes')
 const userRoutes = require('./routes/userRoutes')
 const insightsRoutes = require('./routes/insightsRoutes')
 
-// middleware
-// maybe specify origin in future
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true
-}))
+
 // if client sends json make it a js object
 app.use(express.json());
 
