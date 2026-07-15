@@ -18,7 +18,10 @@ const insightsRoutes = require('./routes/insightsRoutes')
 
 // middleware
 // maybe specify origin in future
-app.use(cors());
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  credentials: true
+}))
 // if client sends json make it a js object
 app.use(express.json());
 

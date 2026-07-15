@@ -1,3 +1,5 @@
+import { API_URL } from '../config'
+
 export async function getMonthlyInsights(month?: number, year?: number) {
   const token = localStorage.getItem('token');
 
@@ -7,7 +9,7 @@ export async function getMonthlyInsights(month?: number, year?: number) {
 
   const query = params.toString() ? `?${params.toString()}` : '';
 
-  const response = await fetch(`http://localhost:3000/insights/monthly${query}`, {
+  const response = await fetch(`${API_URL}/insights/monthly${query}`, {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` }
   });

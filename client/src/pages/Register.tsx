@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Register() {
   const [firstName, setFirstName] = useState('');
@@ -13,7 +14,7 @@ function Register() {
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    const response = await fetch('http://localhost:3000/auth/register', {
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ firstName, surname, email, password })

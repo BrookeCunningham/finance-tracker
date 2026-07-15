@@ -1,7 +1,9 @@
+import { API_URL } from '../config'
+
 export async function getBudgets() {
   const token = localStorage.getItem('token');
 
-  const response = await fetch('http://localhost:3000/budget/view', {
+  const response = await fetch(`${API_URL}/budget/view`, {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -16,7 +18,7 @@ export async function getBudgets() {
 export async function addBudget(budget: any) {
   const token = localStorage.getItem('token');
 
-  const response = await fetch('http://localhost:3000/budget/add', {
+  const response = await fetch(`${API_URL}/budget/add`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +35,7 @@ export async function addBudget(budget: any) {
 export async function editBudget(id: string, budget: any) {
   const token = localStorage.getItem('token');
 
-  const response = await fetch(`http://localhost:3000/budget/edit/${id}`, {
+  const response = await fetch(`${API_URL}/budget/edit/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -51,7 +53,7 @@ export async function editBudget(id: string, budget: any) {
 export async function deleteBudget(id: string) {
   const token = localStorage.getItem('token');
 
-  const response = await fetch(`http://localhost:3000/budget/delete/${id}`, {
+  const response = await fetch(`${API_URL}/budget/delete/${id}`, {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });

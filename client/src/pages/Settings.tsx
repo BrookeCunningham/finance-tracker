@@ -9,6 +9,7 @@ import Sidebar from "../components/Sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { API_URL } from "../config";
 
 function Settings() {
   const { logout } = useAuth();
@@ -19,7 +20,7 @@ function Settings() {
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
 
   useEffect(() => {
-    fetch('http://localhost:3000/user/view', {
+    fetch(`${API_URL}/user/view`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then((r) => r.json())
@@ -33,7 +34,7 @@ function Settings() {
 
   const handleUpdateUser = async () => {
     try {
-      const response = await fetch('http://localhost:3000/user/edit', {
+      const response = await fetch(`${API_URL}/user/edit`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(userForm)
@@ -49,7 +50,7 @@ function Settings() {
   const handleDeleteAccount = async () => {
     if (!window.confirm('Are you sure? This cannot be undone.')) return;
     try {
-      const response = await fetch('http://localhost:3000/user/delete', {
+      const response = await fetch(`${API_URL}/user/delete`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

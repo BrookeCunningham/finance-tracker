@@ -1,4 +1,5 @@
-const BASE = 'http://localhost:3000/plaid';
+import { API_URL } from "../config";
+const BASE = `${API_URL}/plaid`;
 
 const authHeaders = () => ({
   'Content-Type': 'application/json',

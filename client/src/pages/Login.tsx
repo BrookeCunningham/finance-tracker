@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import { API_URL } from "../config";
 
 function Login() {
 
@@ -17,7 +17,7 @@ function Login() {
  const handleLogin = async () => {
   console.log('handleLogin called', email, password);
   try {
-    const response = await fetch('http://localhost:3000/auth/signIn', {
+    const response = await fetch(`${API_URL}/auth/signIn`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
