@@ -17,7 +17,6 @@ function Settings() {
   const token = localStorage.getItem('token');
 
   const [userForm, setUserForm] = useState({ firstName: '', surname: '', email: '' });
-  const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
 
   useEffect(() => {
     fetch(`${API_URL}/user/view`, {
