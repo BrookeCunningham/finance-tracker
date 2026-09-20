@@ -1,214 +1,337 @@
-# Fintrak
 
-A full-stack personal finance tracker. Log transactions, set category budgets, and see monthly spending broken down by category. Auth is JWT-based and there's a Plaid integration for pulling in example bank transactions (PLAID Sandbox).
+# Project Structure
 
-## Stack
+This project is a full-stack web application with a **React frontend** and **Node.js/Express backend**.
 
-**Backend**
-- Node.js + Express
-- PostgreSQL, hosted on ElephantSQL
-- Prisma 
-- JWT for auth, bcrypt for password hashing
-- Plaid Node SDK
-
-**Frontend**
-- React + TypeScript + Vite
-- MUI v6
-- Recharts for graphs
-- React Router
-
-**Dev**
-- Thunder Client (VS Code) for hitting endpoints during development
-
-## Project structure
-
-```
-finance-tracker/
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/          # prisma schema + client
-│   └── server.js
-└── frontend/
-    └── src/
-        ├── api/
-        ├── components/
-        ├── context/
-        ├── pages/
-        └── theme/
+```text
+project/
+├── client/                 # Frontend
+└── server/                 # Backend
 ```
 
-## Backend
+# Frontend
 
-### Database
+The frontend is built with **React, TypeScript and Vite**.
 
-Prisma manages the schema and migrations. Three models:
+## Frontend Frameworks & Tools
 
-- **User** — `userId`, `name`, `email`, `password` (hashed), `createdAt`
-- **Transaction** — `userId`, `plaidId` (nullable), `transactionId`, `value`, `payee`, `category`, `description`, `createdAt`
-- **Budget** — `userId`, `budgetId`, `category`, `budgetValue`, `createdAt`
+- **React** — Builds the user interface.
+- **TypeScript** — Adds static typing.
+- **Vite** — Development server and build tool.
+- **React Router** — Handles page navigation.
+- **Material UI (MUI)** — Provides UI components and styling.
+- **Emotion** — Handles MUI/React styling.
+- **Axios / Fetch** — Sends requests to the backend API.
+- **Recharts** — Creates charts and graphs.
+- **react-plaid-link** — Integrates Plaid.
+- **Oxlint** — Checks the code for problems.
 
-CRUD is handled through Prisma inside each controller.
+## Frontend Structure
 
-### Endpoints
-
-**Auth**
-- `POST /auth/register` — register a new user
-- `POST /auth/signIn` — sign in, returns a JWT
-- `POST /auth/logout` — logout
-
-**User**
-- `GET /user/view` — get the current user's profile
-- `PUT /user/edit` — update profile
-- `DELETE /user/delete` — delete account
-
-**Transactions**
-- `GET /transaction/view` — list transactions
-- `POST /transaction/add` — add a transaction
-- `PUT /transaction/edit` — edit a transaction
-- `DELETE /transaction/delete` — delete a transaction
-
-**Budgets**
-- `GET /budget/view` — list budgets
-- `POST /budget/add` — create a budget
-- `PUT /budget/edit` — edit a budget
-- `DELETE /budget/delete` — delete a budget
-
-**Plaid**
-- `POST /plaid/createLinkToken` — create a Plaid link token
-- `POST /plaid/exchangeToken` — exchange a public token for an access token
-- `POST /plaid/transactions` — pull transactions from the connected bank
-
-Everything except `/auth` sits behind the `authenticateToken` middleware.
-
-### Architecture
-
-Standard MVC:
-
+```text
+client/
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── context/
+│   ├── pages/
+│   ├── App.tsx
+│   ├── main.tsx
+│   ├── config.ts
+│   ├── theme.ts
+│   ├── App.css
+│   └── index.css
+│
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
 ```
-backend/
+
+### `api/`
+
+Contains functions that send HTTP requests to the backend.
+
+### `components/`
+
+Contains reusable UI components.
+
+Examples:
+
+```text
+components/
+├── Sidebar.tsx
+├── ProtectedRoute.tsx
+└── InsightsPanel.tsx
+```
+
+### `context/`
+
+Contains shared React state.
+
+`AuthContext` manages authentication information such as the user's JWT token and login/logout functions.
+
+### `pages/`
+
+Contains the main screens of the application.
+
+```text
+pages/
+├── Login.tsx
+├── Register.tsx
+├── Dashboard.tsx
+├── Transaction.tsx
+├── Budget.tsx
+└── Settings.tsx
+```
+
+### `App.tsx`
+
+Main application component. Sets up the application's routes and page navigation.
+
+### `main.tsx`
+
+Entry point of the React application. Starts React and renders `App`.
+
+### `config.ts`
+
+Stores shared configuration such as the backend API URL.
+
+### `theme.ts`
+
+Defines the global MUI theme, including colours and fonts.
+
+### `App.css`
+
+Application-specific CSS.
+
+### `index.css`
+
+Global CSS.
+
+---
+
+# Backend
+
+The backend is built with **Node.js, Express, Prisma and PostgreSQL**.
+
+## Backend Frameworks & Tools
+
+- **Node.js** — Runs JavaScript on the server.
+- **Express** — Creates the backend server and API.
+- **Prisma** — Communicates with the database.
+- **PostgreSQL** — Stores application data.
+- **JWT** — Handles authentication.
+- **bcrypt** — Hashes and checks passwords.
+- **CORS** — Controls cross-origin requests.
+
+## Backend Structure
+
+```text
+server/
 ├── controllers/
-│   ├── authController.js
-│   ├── userController.js
-│   ├── transactionController.js
-│   ├── budgetController.js
-│   └── plaidController.js
 ├── routes/
-│   ├── authRoutes.js
-│   ├── userRoutes.js
-│   ├── transactionRoutes.js
-│   ├── budgetRoutes.js
-│   └── plaidRoutes.js
-├── models/            # prisma
-└── server.js
+├── middleware/
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+│
+├── server.js
+├── package.json
+└── .env
 ```
 
-The view layer is the React frontend.
+### `server.js`
 
-**Request flow**
+Main backend entry point.
 
+Responsible for:
+
+- Creating the Express server.
+- Registering middleware.
+- Registering routes.
+- Starting the server.
+
+### `routes/`
+
+Defines the API endpoints and connects them to controllers.
+
+```text
+routes/
+   ↓
+Which endpoint was requested?
+   ↓
+Which controller should handle it?
 ```
-Request comes in
-      ↓
-Route  (decides which controller handles it)
-      ↓
-Controller  (business logic)
-      ↓
-Prisma / model  (database query)
-      ↓
-Controller sends response back
+
+### `controllers/`
+
+Contains the main backend logic.
+
+Controllers can:
+
+- Read request data.
+- Validate information.
+- Check passwords.
+- Create JWTs.
+- Query the database.
+- Send responses.
+
+### `middleware/`
+
+Contains code that runs before controllers.
+
+For example, JWT middleware checks whether a request has a valid authentication token.
+
+```text
+Request
+   ↓
+Middleware
+   ↓
+Check JWT
+   ↓
+Controller
 ```
 
-Each endpoint gets tested in Thunder Client as it's built before moving on.
+### `prisma/`
+
+Contains the database configuration and migrations.
+
+#### `schema.prisma`
+
+Defines the database models and structure.
+
+#### `migrations/`
+
+Contains records of database structure changes.
+
+```text
+Change schema
+     ↓
+Create migration
+     ↓
+Update database
+```
+
+### `.env`
+
+Stores environment-specific configuration and secrets.
+
+Examples include:
+
+```text
+DATABASE_URL
+JWT_SECRET
+PORT
+```
+
+---
+
+# Database
+
+The backend uses Prisma to communicate with PostgreSQL.
+
+```text
+Node.js
+   ↓
+Prisma
+   ↓
+PostgreSQL
+```
+
+- **Prisma** — Database access layer.
+- **PostgreSQL** — Stores the actual data.
+- **Prisma migrations** — Keep database changes organised.
+
+---
+
+# Full Application Structure
+
+```text
+                         APPLICATION
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+          FRONTEND                         BACKEND
+              │                               │
+      React + TypeScript                  Node.js
+              │                               │
+            Vite                          Express
+              │                               │
+       Pages / Components                 Routes
+              │                               │
+           API calls                    Middleware
+              │                               │
+              └──────── HTTP ────────────────┘
+                                              │
+                                         Controllers
+                                              │
+                                           Prisma
+                                              │
+                                         PostgreSQL
+```
+
+# Setup
 
 ## Frontend
 
-- `main.tsx` — Vite entry. Wraps the app in `AuthProvider`, the MUI `ThemeProvider`, and `BrowserRouter`.
-- `App.tsx` — top-level `<Routes>`. Protected pages are wrapped in `<ProtectedRoute>`.
+From the `client` directory:
 
-**pages/**
-- `Login.tsx` — login form. Posts to `/auth/signIn`, stores the returned JWT in `localStorage`, redirects to the dashboard.
-- `Register.tsx` — same idea for new users.
-- `Dashboard.tsx` — overview: recent transactions, budget summary, and the Monthly Insights panel.
-- `Transactions.tsx` — full transaction list with add/edit/delete.
-- `Budgets.tsx` — budget list and creation form.
-- `Settings.tsx` — profile and account settings.
-
-**components/**
-- `ProtectedRoute.tsx` — checks for a token in `localStorage`. If it's missing, kicks the user to `/login`.
-- `MonthlyInsights.tsx` — the insights panel. Fetches monthly aggregates and renders MUI summary cards on top of a Recharts bar chart.
-
-**api/**
-Thin wrappers around `fetch`. No axios. Each helper grabs the JWT from `localStorage` and sets the `Authorization` header.
-- `auth.ts` — sign in, register
-- `transactions.ts` — get / add / edit / delete
-- `budgets.ts` — get / add / edit / delete
-- `plaid.ts` — create link token, exchange public token
-- `user.ts` — profile updates
-
-**context/**
-- `AuthContext.tsx` — holds the token and user state, exposes `login`, `logout`, and `isAuthenticated`.
-
-**theme/**
-- Custom MUI theme — colours, typography, a few component overrides.
-
-## Example request
-
-Adding a transaction:
-
-```http
-POST /transaction/add
-Host: localhost:5000
-Authorization: Bearer <jwt>
-Content-Type: application/json
-
-{
-  "value": 12.50,
-  "payee": "Tesco",
-  "category": "Groceries",
-  "description": "Weekly shop"
-}
-```
-
-Response:
-
-```json
-{
-  "transactionId": "clx7f2h3k0001abcd",
-  "userId": "clx7f0abc0000xyzt",
-  "plaidId": null,
-  "value": 12.50,
-  "payee": "Tesco",
-  "category": "Groceries",
-  "description": "Weekly shop",
-  "createdAt": "2026-01-14T18:20:31.000Z"
-}
-```
-
-If the token's missing or expired, `authenticateToken` will 401 before the controller runs.
-
-## Running locally
-
-Node 18+ and a PostgreSQL connection string.
-
-**Backend**
 ```bash
-cd backend
 npm install
+npm run dev
+```
+
+Create any required frontend environment variables in `.env`.
+
+## Backend
+
+From the `server` directory:
+
+```bash
+npm install
+```
+
+Create a `.env` file containing the required configuration, for example:
+
+```text
+DATABASE_URL=...
+JWT_SECRET=...
+PORT=3000
+```
+
+Install/generate Prisma:
+
+```bash
+npx prisma generate
+```
+
+Run database migrations:
+
+```bash
 npx prisma migrate dev
-npm run dev
 ```
 
-`.env` needs:
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `PLAID_CLIENT_ID`, `PLAID_SECRET`, `PLAID_ENV`
+Start the backend using the project's configured npm start/development script.
 
-**Frontend**
-```bash
-cd frontend
-npm install
-npm run dev
+## Development Flow
+
+Both the frontend and backend need to be running during development.
+
+```text
+Frontend
+   ↓
+HTTP API Request
+   ↓
+Express Backend
+   ↓
+Controller
+   ↓
+Prisma
+   ↓
+PostgreSQL
+   ↓
+Response
+   ↓
+Frontend UI
 ```
-
-`.env` needs `VITE_API_URL` pointing at the backend (e.g. `http://localhost:5000`).
+````
