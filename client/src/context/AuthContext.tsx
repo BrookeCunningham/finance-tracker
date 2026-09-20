@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 
+// essentially a data shape?
 interface AuthContextType {
   token: string | null;
   login: (token: string) => void;

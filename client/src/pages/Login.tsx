@@ -9,6 +9,7 @@ import { API_URL } from "../config";
 
 function Login() {
 
+  // not using api functions, await fetch ?
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();

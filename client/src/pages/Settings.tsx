@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { API_URL } from "../config";
 
+// not using api folder
 function Settings() {
   const { logout } = useAuth();
   const navigate = useNavigate();

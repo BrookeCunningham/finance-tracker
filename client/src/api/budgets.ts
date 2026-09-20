@@ -15,6 +15,8 @@ export async function getBudgets() {
   return response.json();
 }
 
+// type def
+// await fetch (url) using plain js/ts
 export async function addBudget(budget: any) {
   const token = localStorage.getItem('token');
 

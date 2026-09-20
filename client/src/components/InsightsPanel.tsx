@@ -3,6 +3,8 @@ import { Box, Card, CardContent, Typography, Grid, CircularProgress } from '@mui
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { getMonthlyInsights } from '../api/insights';
 
+// defining types 
+
 interface InsightsCategory {
   category: string;
   currentValue: number;

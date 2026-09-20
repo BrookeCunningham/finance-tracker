@@ -16,20 +16,27 @@ import { getBudgets, addBudget, editBudget, deleteBudget } from "../api/budgets"
 
 const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Eating Out', 'Subscriptions', 'Income', 'Other'];
 
+// budget page
 function Budget() {
+
+  // variables that needs to be updated/edited
   const [budgets, setBudgets] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ category: 'Other', budgetValue: '' });
 
+  // on component render -> fetch data function called
   useEffect(() => {
     fetchData();
   }, []);
 
+  // returns data then loads into budgets variable
   const fetchData = () => {
     getBudgets().then((data) => setBudgets(data.budgets)).catch(console.error);
   };
 
+  //?: optional
+  // handle opening form
   const handleOpen = (budget?: any) => {
     if (budget) {
       setEditingId(budget.budgetId);
@@ -43,6 +50,8 @@ function Budget() {
 
   const handleClose = () => setOpen(false);
 
+  // waiting on response from backend -> async
+  // calls function from the api
   const handleSave = async () => {
     try {
       const payload = {
@@ -70,6 +79,7 @@ function Budget() {
     }
   };
 
+  // budgets.map creates a card for each budget
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar />
