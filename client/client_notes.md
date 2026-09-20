@@ -1,207 +1,283 @@
-FRONTEND
-serverside frameworks/ tools used
-- Frontend Stack — Quick Explanation
-React → Builds the frontend/UI.
 
-TypeScript → Adds types and catches errors.
+# Frontend
 
-Vite → Runs and builds the React app.
+The frontend is built with **React, TypeScript and Vite**.
 
-MUI → Provides ready-made UI components.
+## Project Structure
 
-Emotion → Handles styling for MUI/React.
+```text
+client/
+└── src/
+    ├── api/
+    ├── components/
+    ├── context/
+    ├── pages/
+    ├── App.tsx
+    ├── main.tsx
+    ├── config.ts
+    ├── theme.ts
+    ├── App.css
+    └── index.css
+```
 
-MUI Icons → Provides icons.
+## Tech Stack
 
-React Router → Handles frontend page navigation.
+- **React** → Builds the UI.
+- **TypeScript** → Adds types and error checking.
+- **Vite** → Runs and builds the frontend.
+- **MUI** → Provides ready-made UI components.
+- **Emotion** → Handles styling.
+- **MUI Icons** → Provides icons.
+- **React Router** → Handles page navigation.
+- **Axios / Fetch** → Sends requests to the backend.
+- **Recharts** → Creates charts and graphs.
+- **react-plaid-link** → Connects the app to Plaid.
+- **Oxlint** → Checks code for problems.
 
-Axios → Sends requests to the backend API.
+## `pages/`
 
-Recharts → Creates charts and graphs.
+Contains the main screens of the application.
 
-react-plaid-link → Connects the app to Plaid/bank accounts.
+```text
+pages/
+├── Login.tsx
+├── Register.tsx
+├── Dashboard.tsx
+├── Transaction.tsx
+├── Budget.tsx
+└── Settings.tsx
+```
 
-Oxlint → Checks code for problems.
+**Page = a complete screen.**
 
-React DOM → Renders React into the browser.
+Example:
 
-@types/* → TypeScript definitions for React/Node libraries.
+```text
+/login        → Login
+/register     → Register
+/dashboard    → Dashboard
+/transactions → Transactions
+/budgets      → Budget
+/settings     → Settings
+```
 
-Overall
-React + TypeScript
-       ↓
-     Vite
-       ↓
-MUI + Emotion → UI & Styling
-       ↓
-React Router → Pages
-       ↓
-Axios → Backend API
-       ↓
-Express Backend
+## `components/`
 
+Contains reusable pieces of UI.
 
+Examples:
 
-/client/ random files
-App.tsx → Main React component. Defines the main application UI and brings pages/components together.
+```text
+components/
+├── Sidebar.tsx
+├── ProtectedRoute.tsx
+└── InsightsPanel.tsx
+```
 
-main.tsx → Entry point of the React app. Starts React and renders <App /> into the browser.
+**Component = a reusable part of a page.**
 
-App.css → CSS specifically for the App component/UI.
+For example:
 
-index.css → Global CSS. Styles that apply across the whole application.
+```text
+Dashboard
+├── Sidebar
+├── Balance Card
+├── Spending Chart
+└── Transaction List
+```
 
-theme.ts → Defines the application's MUI theme, such as colours, fonts, spacing, and component styling.
+## `context/`
 
-config.ts → Stores configuration values used throughout the app, such as the backend API URL, instead of hardcoding them in multiple files.
+Contains shared React state that multiple components need.
 
-/api
-typescript - CRUD ops to be sent to the server side via http requests ie
-export async function editBudget(id: string, budget: any) {
-  const token = localStorage.getItem('token');
+Your `AuthContext` manages authentication:
 
-  const response = await fetch(`${API_URL}/budget/edit/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(budget)
-  });
-  if (response.status === 401) { localStorage.removeItem('token'); window.location.href = '/login'; }
-
-  if (!response.ok) throw new Error('Failed to edit budget');
-
-  return response.json();
-}
-send with token all the tim, thius formatting is ?
-
-
-/componants = reusable blocks in it
-all tsx = typescript and jsx - typescript and html like react code together
-useState:
-useEfffect: 
-
-/context = Context is used to store information that multiple components need to access without passing it through every component manually.
+```text
 AuthContext
-│
 ├── token
 ├── login()
 └── logout()
+```
 
-to access use hook 
-import { useAuth } from './context/AuthContext';
+Components access it using:
 
-function Dashboard() {
-    const { token, logout } = useAuth();
+```tsx
+const { token, login, logout } = useAuth();
+```
 
-    return (
-        
-    );
-}
-needs to be inside auth componant
+The component must be inside the `AuthProvider`.
 
-/pages
-src/
-├── components/    → Reusable UI pieces
-├── pages/         → Full pages/screens
-├── context/       → Shared application data
-├── App.tsx
-└── main.tsx
+## `api/`
 
-omponent → Small reusable piece
-             ↓
-          Navbar
-          Button
-          Card
+Contains functions that communicate with the backend.
 
-Page → Complete screen
-        ↓
-     Login
-     Dashboard
-     Profile
+```text
+Page
+ ↓
+API function
+ ↓
+HTTP request
+ ↓
+Backend
+```
 
-useState()
+Common operations:
+
+- **GET** → Retrieve data
+- **POST** → Create data
+- **PUT** → Update data
+- **DELETE** → Delete data
+
+Protected requests include the JWT token:
+
+```text
+Authorization: Bearer <token>
+```
+
+## `App.tsx`
+
+The main React component that sets up the application's routes.
+
+It connects URLs to pages and protects pages that require authentication.
+
+```text
+App
+ ↓
+React Router
+ ├── /login → Login
+ ├── /register → Register
+ ├── /dashboard → Dashboard
+ ├── /transactions → Transactions
+ ├── /budgets → Budget
+ └── /settings → Settings
+```
+
+Protected pages use `ProtectedRoute` to check authentication.
+
+## `main.tsx`
+
+The entry point of the React application.
+
+It starts React and renders `App` in the browser.
+
+```text
+main.tsx
    ↓
-Store/change data
-
-useEffect()
+App
    ↓
-Run something when component loads/changes
+Application
+```
 
-.map()
-   ↓
-Turn data into UI
+## `config.ts`
 
-.filter()
-   ↓
-Select specific data
+Stores shared configuration, such as the backend API URL.
 
-.reduce()
-   ↓
-Calculate a value from data
+This avoids hardcoding the backend URL throughout the application.
 
-condition ? A : B
-   ↓
-Show different UI depending on condition
+## `theme.ts`
 
-<Component prop={value} />
-   ↓
-Pass information to components
+Defines the global MUI theme:
 
-Overall flow
-Dashboard loads
-      ↓
-useEffect()
-      ↓
-getTransactions()
-      ↓
-transactions state
-      ↓
-filter / reduce
-      ↓
-Calculate income, expenses, balance
-      ↓
-.map()
-      ↓
-Display cards + transactions
+- Colours
+- Background
+- Text colours
+- Font
 
-/              → Redirect to /login
-/login         → Login
-/register      → Register
-/dashboard     → Dashboard
-/transactions  → Transactions
-/budgets       → Budget
-/settings      → Settings
-User visits /dashboard
-        ↓
-ProtectedRoute
-        ↓
-Check authentication/token
-        ↓
-     ┌──┴──┐
-     ↓     ↓
-   Valid  Invalid
-     ↓     ↓
-Dashboard  Login
-
+```text
 theme.ts
    ↓
 MUI Theme
-   │
    ├── Colours
-   │     ├── Primary blue
-   │     ├── Background
-   │     └── Text colours
-   │
+   ├── Background
    └── Typography
-         └── Inter font
+```
 
-Simple definition:
+## CSS Files
 
-theme.ts defines the consistent colours, fonts, and general styling used throughout your MUI application.
+### `App.css`
 
-npm install
-set up .env folder
-npm run dev
+Contains styling specific to the application.
 
+### `index.css`
+
+Contains global CSS used across the frontend.
+
+# Common React Patterns
+
+```text
+useState()
+→ Store and change component data
+
+useEffect()
+→ Run code when a component loads or changes
+
+.map()
+→ Turn an array of data into UI
+
+.filter()
+→ Select specific data
+
+.reduce()
+→ Calculate a value from data
+
+condition ? A : B
+→ Show different UI based on a condition
+
+<Component prop={value} />
+→ Pass data to a component
+```
+
+# Typical Data Flow
+
+```text
+User opens page
+      ↓
+React component loads
+      ↓
+useEffect()
+      ↓
+API function
+      ↓
+Backend request
+      ↓
+Data returned
+      ↓
+useState()
+      ↓
+.map() / .filter() / .reduce()
+      ↓
+UI displayed
+```
+
+# Overall Frontend Structure
+
+```text
+src/
+│
+├── pages/       → Full screens
+├── components/  → Reusable UI
+├── context/     → Shared state/auth
+├── api/         → Backend requests
+│
+├── App.tsx      → Routes/app structure
+├── main.tsx     → Starts React
+├── config.ts    → Configuration
+├── theme.ts     → MUI theme
+├── App.css      → App styling
+└── index.css    → Global styling
+```
+
+## In Short
+
+**Pages** are the screens.
+
+**Components** are reusable UI.
+
+**Context** manages shared state such as authentication.
+
+**API** files communicate with the backend.
+
+**`App.tsx`** manages the application's routes.
+
+**`main.tsx`** starts the React application.
+````
