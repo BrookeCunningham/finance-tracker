@@ -1,74 +1,247 @@
-node.js = run js ouside the browser
-express = web framework makes it easier to use Node.js for web servers and apis
-node server.js = start server
-cors = if backend is using CORS then the server tells the cross origin requests (Javascript from anothe rorigin can access a reesponse)are allowed 
-imports route files server.js -> routes -> 
-app.use = do all the time
-import files then say if /auth send to the file object 
+Backend Notes
+Node.js
 
-routes
-- import controller function
-- create router object
-- define roots and attack controller functions
-- export router to server.js
+Runs JavaScript outside the browser.
 
-controllers
-- async function using express prisma object
-- bcrypt for password hashing
-- load prisma client to talk to databse
-- one instance created in prisma/client
-- const X = req.body
-- await prisma.user.findUnique { email: exampleEmail}
-- await bcrypt.compare(password, user.password);
-- res.status(200).json({
-        message: "Login successful",
-        token: token
-    });
-- const token = jwt.sign(
-        {
-            userId: user.userId,
-            username: user.email
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: '1h' 
-        }
-    );
+Lets us build backend servers.
 
-middlewere
-- JWT lib verifies tokens
-- gets header
-- removes bearer 
-- jwt.veriufy
-- save the decoded token info as the user
+Express
 
-Database 
-- prisma migration = redcord of database change 
-- make a migration then prisma updates 
-schema = draft
-migrations = instructions for change 
-- postgresql hosted on RENDER via url 
-- schema.prisma = models 
-example 
-{model User {
-  userId       Int           @id @default(autoincrement())
-  email        String        @unique
-  firstName    String
-  surname      String
-  password     String
-  createdAt    DateTime      @default(now())
-  plaidAccessToken String?
-  transactions Transaction[]
-  budgets      Budget[]
+Framework for Node.js.
+
+Makes it easier to build servers and APIs.
+
+node server.js
+
+
+→ Starts the server.
+
+CORS
+
+CORS tells the browser which cross-origin requests are allowed to access the response.
+
+server.js
+
+Main file that sets up the backend.
+
+app.use('/auth', authRoutes)
+app.use('/user', userRoutes)
+
+
+Means:
+
+/auth → authRoutes
+/user → userRoutes
+
+
+app.use() registers middleware or routes with Express.
+
+Routes
+
+Routes decide which controller runs.
+
+They:
+
+Import controller functions
+
+Create a router
+
+Define the route
+
+Connect the route to the controller
+
+Export the router
+
+Example:
+
+router.post('/login', login);
+
+POST /login → login controller
+
+Controllers
+
+Controllers contain the actual logic.
+
+They:
+
+Get data from the request
+
+Talk to the database
+
+Check passwords
+
+Create tokens
+
+Send a response
+
+Get data
+const { email, password } = req.body;
+
+Find user
+const user = await prisma.user.findUnique({
+    where: { email }
+});
+
+Check password
+await bcrypt.compare(password, user.password);
+
+Create JWT
+const token = jwt.sign(
+    { userId: user.userId },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+);
+
+Send response
+res.status(200).json({
+    message: "Login successful",
+    token
+});
+
+Middleware
+
+Middleware runs before the controller.
+
+JWT authentication:
+
+Request
+   ↓
+Get token
+   ↓
+Verify token
+   ↓
+Valid?
+   ↓
+req.user = decoded
+   ↓
+next()
+   ↓
+Controller
+
+
+JWT library verifies the token
+
+Gets token from the header
+
+Removes Bearer
+
+Verifies token
+
+decoded = information inside the token
+
+Saves it as req.user
+
+next() continues the request
+
+Database
+PostgreSQL
+
+The actual database that stores the data.
+
+In this project:
+
+PostgreSQL → hosted on Render
+
+Prisma
+
+Tool that lets Node.js communicate with PostgreSQL.
+
+Node.js
+   ↓
+Prisma
+   ↓
+PostgreSQL
+
+Prisma Client
+
+Used to query the database:
+
+prisma.user.findUnique(...)
+
+
+Usually one Prisma Client instance is created and reused.
+
+schema.prisma
+
+Defines the database models/structure.
+
+Example:
+
+model User {
+    userId    Int    @id @default(autoincrement())
+    email     String @unique
+    firstName String
+    surname   String
+    password  String
 }
 
 
-SETUP
-- npm install dependancies in package.json
-- touch .env with database_url and jwt secret plus port number to run server off - serve is held locally
-- npx prisma migrate dev
-- npx prisma generate 
-npm run dev / npm start because in   "start": "node server.js",
-  "postinstall": "prisma generate"
+Think:
 
-}} 
+schema.prisma
+      ↓
+What the database should look like
+
+Migrations
+
+A migration is a record/instructions for changing the database.
+
+schema.prisma
+      ↓
+change model
+      ↓
+migration
+      ↓
+database updated
+
+
+Migrations are stored in:
+
+prisma/migrations
+
+Setup
+1. Install dependencies
+npm install
+
+2. Create .env
+
+Contains things like:
+
+DATABASE_URL="..."
+JWT_SECRET="..."
+PORT=3000
+
+3. Run Prisma migration
+npx prisma migrate dev
+
+4. Generate Prisma Client
+npx prisma generate
+
+5. Start server
+npm run dev
+
+
+or:
+
+npm start
+
+Overall
+server.js
+    ↓
+middleware
+    ↓
+routes
+    ↓
+controllers
+    ↓
+Prisma
+    ↓
+PostgreSQL
+
+
+server.js → sets everything up
+middleware → checks/processes requests
+routes → decide where requests go
+controllers → do the work
+Prisma → talks to database
+PostgreSQL → stores data
