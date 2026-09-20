@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
+// theme = typescript object
 const theme = createTheme({
   palette: {
     primary: {
@@ -18,4 +19,5 @@ const theme = createTheme({
   },
 });
 
+// exports this theme object
 export default theme;

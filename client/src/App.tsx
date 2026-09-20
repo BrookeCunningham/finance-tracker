@@ -8,6 +8,9 @@ import Register from './pages/Register';
 import Budget from './pages/Budget';
 import Settings from './pages/Settings';
 
+// main react component everything loads into 
+// mainly just defining dependancies between componants
+// not everything renders
 function App() {
   return (
     <AuthProvider>

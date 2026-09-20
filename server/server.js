@@ -13,8 +13,8 @@ app.use(cors({
   credentials: true
 }))
 
-// imports route files
-// next step in the pipeline
+// loads whatever authRputes.js exports
+// basically export the router
 const authRoutes = require('./routes/authRoutes')
 const transactionRoutes = require('./routes/transactionRoutes')
 const budgetRoutes = require('./routes/budgetRoutes')
@@ -30,7 +30,9 @@ app.use((req,res,next)=>{
   next();
 });
 
-// register routes and redirect
+// for /auth use authRouters
+// add this 'rule' to my express application
+// auth = prefix
 app.use('/auth', authRoutes)
 app.use('/transaction', transactionRoutes)
 app.use('/budget', budgetRoutes)

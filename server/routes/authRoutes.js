@@ -1,7 +1,7 @@
 // import controller functions
 const { register, signIn, logout} = require('../controllers/authController.js');
 
-// create router object to define routes on
+// create router object to define routes on this level
 // like a mini local express app 
 const authRouter = require('express').Router();
 

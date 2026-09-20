@@ -8,6 +8,7 @@ const authenticateToken = require('../middleware/authMiddleware.js');
 const budgetRouter = require('express').Router();
 
 // define routes and attach controller functions
+// when someone sends get to /view authenticate THEN viewbudget
 budgetRouter.get('/view', authenticateToken, viewBudget);
 budgetRouter.post('/add', authenticateToken, addBudget);
 budgetRouter.put('/edit/:id', authenticateToken, editBudget);
