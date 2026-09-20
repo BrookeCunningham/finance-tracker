@@ -1,0 +1,74 @@
+node.js = run js ouside the browser
+express = web framework makes it easier to use Node.js for web servers and apis
+node server.js = start server
+cors = if backend is using CORS then the server tells the cross origin requests (Javascript from anothe rorigin can access a reesponse)are allowed 
+imports route files server.js -> routes -> 
+app.use = do all the time
+import files then say if /auth send to the file object 
+
+routes
+- import controller function
+- create router object
+- define roots and attack controller functions
+- export router to server.js
+
+controllers
+- async function using express prisma object
+- bcrypt for password hashing
+- load prisma client to talk to databse
+- one instance created in prisma/client
+- const X = req.body
+- await prisma.user.findUnique { email: exampleEmail}
+- await bcrypt.compare(password, user.password);
+- res.status(200).json({
+        message: "Login successful",
+        token: token
+    });
+- const token = jwt.sign(
+        {
+            userId: user.userId,
+            username: user.email
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: '1h' 
+        }
+    );
+
+middlewere
+- JWT lib verifies tokens
+- gets header
+- removes bearer 
+- jwt.veriufy
+- save the decoded token info as the user
+
+Database 
+- prisma migration = redcord of database change 
+- make a migration then prisma updates 
+schema = draft
+migrations = instructions for change 
+- postgresql hosted on RENDER via url 
+- schema.prisma = models 
+example 
+{model User {
+  userId       Int           @id @default(autoincrement())
+  email        String        @unique
+  firstName    String
+  surname      String
+  password     String
+  createdAt    DateTime      @default(now())
+  plaidAccessToken String?
+  transactions Transaction[]
+  budgets      Budget[]
+}
+
+
+SETUP
+- npm install dependancies in package.json
+- touch .env with database_url and jwt secret plus port number to run server off - serve is held locally
+- npx prisma migrate dev
+- npx prisma generate 
+npm run dev / npm start because in   "start": "node server.js",
+  "postinstall": "prisma generate"
+
+}} 
